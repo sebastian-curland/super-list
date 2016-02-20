@@ -1,0 +1,102 @@
+<style>
+	.strikethrough{
+		text-decoration: line-through;
+	}
+	
+	.prodName{
+		padding-right:10px;
+	}
+		
+	#prodTable {
+	  display: table;
+	  width: 200px;
+	}
+
+	#prodTable div { 
+	  display: table-row;
+	}
+
+	#prodTable div span { 
+	  display: table-cell;
+	}
+
+	
+</style>
+
+
+
+<div id="prodTable">
+	<% products.forEach(function(product, index){ %>
+    <div id="<%=product.id%>">        
+        <span><input type="checkbox" name="status" value="true" <%=product.status ? 'checked':'' %> onclick="updateProductStatus('<%=product.id%>', this.checked)"/></span>
+        <span id="span<%=product.id%>" class="prodName <%=product.status ? 'strikethrough':'empty' %>"><%=product.name%></span>
+        <span><a href="#" onclick="deleteProduct('<%=product.id%>')">delete</a></span>
+    </div>
+	<% }); %>
+</div>
+
+
+<br><br>
+<div><input autofocus placeholder="name" id="name" name="name" /><button type="submit" onclick="createProduct()">Add</button></div>	
+
+
+
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+var socket = io.connect("//localhost:9000");
+
+socket.on('newProduct', function(product){
+	var prodHTML = '<div id="' + product._id + '">';
+	prodHTML += '<span><input type="checkbox" name="status" value="true" onclick="updateProductStatus(\'' + product._id + '\', this.checked)"/></span>';
+	prodHTML += '<span id="span' + product._id + '" class="prodName empty">' + product.name + '</span>';
+	prodHTML += '<span><a href="#" onclick="deleteProduct(\'' +  product._id + '\')">delete</a></span>';
+	prodHTML += '</div>';
+	$('#prodTable').append(prodHTML);	
+});
+
+socket.on('productDeleted', function(productId){	
+	$('#'+productId).remove();	
+});
+
+socket.on('productUpdated', function(product){	
+	if(product.status){
+		$('#span'+product._id).addClass('strikethrough');		
+	}else{
+		$('#span'+product._id).removeClass('strikethrough');	
+	}
+});
+
+function deleteProduct(productId){
+	$.ajax({
+		url: '/' + productId,
+		type: 'DELETE',
+		success: function(result) {
+			
+		}
+	});
+}
+
+function updateProductStatus(productId, status){
+	$.ajax({
+		url: '/status/' + productId,
+		type: 'PUT',
+		data: { status: status},		
+		success: function(result) {
+			
+		}
+	});
+}
+
+function createProduct(){
+	$.ajax({
+		url: '/',
+		type: 'POST',
+		data: { name: $('#name').val()},		
+		success: function(result) {
+			
+		}
+	});
+}
+</script>

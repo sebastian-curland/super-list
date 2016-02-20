@@ -1,0 +1,16 @@
+{
+  "name": "super-list",
+  "version": "0.0.0",
+  "description": "",
+  "dependencies":{
+		"express":"*",
+		"body-parser":"*",
+		"morgan":"*",
+		"mongoose":"*",
+		"ejs":"*",
+		"socket.io":"*"
+  },
+  "main": "server.js",  
+  "author": "Sebastian Curland",
+  "license": "ISC"
+}
