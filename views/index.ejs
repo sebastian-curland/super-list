@@ -1,4 +1,12 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0;">
+<link rel="stylesheet" type="text/css" href="css/main.css">
 <style>
+	body{
+		-webkit-text-size-adjust: none;		
+	}
+	
 	.strikethrough{
 		text-decoration: line-through;
 	}
@@ -22,22 +30,33 @@
 
 	
 </style>
+</head>
+<body>
 
-
-
-<div id="prodTable">
-	<% products.forEach(function(product, index){ %>
-    <div id="<%=product.id%>">        
-        <span><input type="checkbox" name="status" value="true" <%=product.status ? 'checked':'' %> onclick="updateProductStatus('<%=product.id%>', this.checked)"/></span>
-        <span id="span<%=product.id%>" class="prodName <%=product.status ? 'strikethrough':'empty' %>"><%=product.name%></span>
-        <span><a href="#" onclick="deleteProduct('<%=product.id%>')">delete</a></span>
-    </div>
-	<% }); %>
-</div>
+	<div id="prodTable">
+		<div class="container">
+			<section class="todo">
+				<ul class="todo-controls">					
+					<li><a href="javascript:deleteAll();">Clear List</a></li>					
+				</ul>
+			
+				<ul id="todo-list" class="todo-list">
+					<% products.forEach(function(product, index){ %>
+					<li id="<%=product.id%>">
+						<input type="checkbox" name="status" id="prod<%=product.id%>" value="true" <%=product.status ? 'checked':'' %> onclick="updateProductStatus('<%=product.id%>', this.checked)"/>
+						<label class="toggle" for="prod<%=product.id%>"></label>
+						<span id="span<%=product.id%>" class="prodName <%=product.status ? 'strikethrough':'empty' %>"><%=product.name%></span>
+						<span><a href="#" onclick="deleteProduct('<%=product.id%>')">X</a></span>
+					</li>
+					<% }); %>				
+				</ul>			
+			</section>
+		</div>
+	</div>
 
 
 <br><br>
-<div><input autofocus placeholder="name" id="name" name="name" /><button type="submit" onclick="createProduct()">Add</button></div>	
+<div><input autofocus placeholder="name" id="newProdName" name="newProdName" /><button type="submit" onclick="createProduct()">Add</button></div>	
 
 
 
@@ -45,15 +64,17 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-var socket = io.connect("//localhost:9000");
+var socket = io.connect("http://list-curland.rhcloud.com:8000");
+//var socket = io.connect("http://localhost:9000");
 
 socket.on('newProduct', function(product){
-	var prodHTML = '<div id="' + product._id + '">';
-	prodHTML += '<span><input type="checkbox" name="status" value="true" onclick="updateProductStatus(\'' + product._id + '\', this.checked)"/></span>';
+	var prodHTML = '<li id="' + product._id + '">';	
+	prodHTML += '<input type="checkbox" name="status" id="prod' + product._id + '" value="true" onclick="updateProductStatus(\'' + product._id + '\', this.checked)"/>';
+	prodHTML += '<label class="toggle" for="prod' + product._id + '"></label>';
 	prodHTML += '<span id="span' + product._id + '" class="prodName empty">' + product.name + '</span>';
-	prodHTML += '<span><a href="#" onclick="deleteProduct(\'' +  product._id + '\')">delete</a></span>';
-	prodHTML += '</div>';
-	$('#prodTable').append(prodHTML);	
+	prodHTML += '<span><a href="#" onclick="deleteProduct(\'' +  product._id + '\')">X</a></span>';
+	prodHTML += '</li>';
+	$('#todo-list').append(prodHTML);	
 });
 
 socket.on('productDeleted', function(productId){	
@@ -63,8 +84,10 @@ socket.on('productDeleted', function(productId){
 socket.on('productUpdated', function(product){	
 	if(product.status){
 		$('#span'+product._id).addClass('strikethrough');		
+		$('#prod'+product._id).prop('checked', true);
 	}else{
 		$('#span'+product._id).removeClass('strikethrough');	
+		$('#prod'+product._id).prop('checked', false);
 	}
 });
 
@@ -74,6 +97,16 @@ function deleteProduct(productId){
 		type: 'DELETE',
 		success: function(result) {
 			
+		}
+	});
+}
+
+function deleteAll(){
+	$.ajax({
+		url: '/deleteAll',
+		type: 'DELETE',
+		success: function(result) {
+			$('#todo-list').empty();
 		}
 	});
 }
@@ -89,14 +122,16 @@ function updateProductStatus(productId, status){
 	});
 }
 
-function createProduct(){
+function createProduct(){	
 	$.ajax({
 		url: '/',
 		type: 'POST',
-		data: { name: $('#name').val()},		
+		data: { name: $('#newProdName').val()},		
 		success: function(result) {
-			
+			$('#newProdName').val('');
 		}
 	});
 }
 </script>
+</body>
+</html>

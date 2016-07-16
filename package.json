@@ -1,7 +1,8 @@
 {
-  "name": "super-list",
-  "version": "0.0.0",
-  "description": "",
+  "name": "openshift-cartridge-nodejs-template",
+  "version": "1.0.1",
+  "description": "Custom Node.js cartridge for OpenShift - sample application",
+  "private": true,
   "dependencies":{
 		"express":"*",
 		"body-parser":"*",
@@ -10,7 +11,10 @@
 		"ejs":"*",
 		"socket.io":"*"
   },
-  "main": "server.js",  
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "author": "Sebastian Curland",
   "license": "ISC"
 }

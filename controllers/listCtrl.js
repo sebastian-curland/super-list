@@ -61,6 +61,18 @@ controller.delete = function(socket){
 	];
 }
 
+controller.deleteAll = function(socket){
+	return [
+		function(req, res, next){
+			List.remove({},function(err){
+				if(err) return next(err);
+				res.sendStatus(200);
+				socket.emit('deletedAll');
+			});
+		}
+	];
+}
+
 controller.updateStatus = function(socket){
 	return [
 		function(req, res, next){
