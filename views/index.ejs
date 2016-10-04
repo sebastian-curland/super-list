@@ -17,7 +17,7 @@
 		
 	#prodTable {
 	  display: table;
-	  width: 200px;
+	  width: 100%;
 	}
 
 	#prodTable div { 
@@ -37,7 +37,9 @@
 		<div class="container">
 			<section class="todo">
 				<ul class="todo-controls">					
-					<li><a href="javascript:deleteAll();">Clear List</a></li>					
+					<li><a href="javascript:deleteAll();">Clear List</a></li>	
+					<li> | </li>
+					<li><input autofocus placeholder="name" id="newProdName" name="newProdName" class="input_add"/><button type="submit" onclick="createProduct()" class="button_add">Add</button></li>					
 				</ul>
 			
 				<ul id="todo-list" class="todo-list">
@@ -56,7 +58,7 @@
 
 
 <br><br>
-<div><input autofocus placeholder="name" id="newProdName" name="newProdName" /><button type="submit" onclick="createProduct()">Add</button></div>	
+
 
 
 
@@ -132,6 +134,14 @@ function createProduct(){
 		}
 	});
 }
+
+$('#newProdName').on('keydown', function(e) {
+    if (e.which == 13) {        
+		e.preventDefault();
+		createProduct();
+    }
+});
+
 </script>
 </body>
 </html>
