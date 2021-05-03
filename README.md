@@ -1,7 +1,7 @@
 # super-list
 
 
-This is a small node.js application to manage lists, I used this as a grocery shopping list but it can be used for any kind of "todo" lists.
+This is a small node.js application to manage lists, I used this as a grocery shopping list but it can be used for any kind of "TODOo" lists.
 
 **Features**
  - Add/Delete entries to the list. 
